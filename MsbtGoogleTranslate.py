@@ -1,5 +1,4 @@
 import random
-from googletrans import Translator
 import concurrent.futures
 import os
 import sys
@@ -17,8 +16,6 @@ all_languages = [
     "su", "sw", "sv", "tg", "ta", "tt", "te", "th", "ti", "ts", "tr", "tk", "ak", "uk", "ur", "ug", 
     "uz", "vi", "cy", "xh", "yi", "yo", "zu"
 ]
-
-translator = Translator()
 
 def translate_to_random_language(text):
     dest_language = random.choice(all_languages)
