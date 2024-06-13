@@ -8,7 +8,7 @@ The tool can translate most of the text to random languages and then translate i
 ## How?
 With [CLMS](https://github.com/KillzXGaming/CLMS) the program can open .msbt files and edit it,
 so the program opens the .msbt file then it creates a temp file so that a python program (converted to exe) can
-translate it to random languages and back with [deep-translator]([[https://github.com/KillzXGaming/CLMS](https://pypi.org/project/googletrans/](https://pypi.org/project/deep-translator/)))
+translate it to random languages and back with [deep-translator](https://github.com/KillzXGaming/CLMS](https://pypi.org/project/googletrans/](https://pypi.org/project/deep-translator/)
 I use c# and python and not only C# because I can't find any package for C# that doesn't require a API-key.
 
 ## Setup
