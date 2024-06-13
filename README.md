@@ -5,13 +5,10 @@ Tested with Paper Mario: The Thousand Year Door (Remake)
 MSBT files are files that contains games text used in Nintendo games.
 The tool can translate most of the text to random languages and then translate it back to english/or any other language.
 
-## Why?
-Just for fun it can lead to very funny results.
-
 ## How?
 With [CLMS](https://github.com/KillzXGaming/CLMS) the program can open .msbt files and edit it,
 so the program opens the .msbt file then it creates a temp file so that a python program (converted to exe) can
-translate it to random languages and bakc with [Googletrans]([https://github.com/KillzXGaming/CLMS](https://pypi.org/project/googletrans/))
+translate it to random languages and back with [Googletrans]([https://github.com/KillzXGaming/CLMS](https://pypi.org/project/googletrans/))
 I use c# and python and not only C# because I can't find any package for C# that doesn't require a API-key.
 
 ## Setup
@@ -30,3 +27,6 @@ I use c# and python and not only C# because I can't find any package for C# that
 8. **Load** the output folder as a mod (with the correct path).
 
 Have fun!
+
+## Why?
+Just for fun it can lead to very funny results.
