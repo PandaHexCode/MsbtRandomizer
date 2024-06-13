@@ -5,6 +5,8 @@ Tested with Paper Mario: The Thousand Year Door (Remake)
 MSBT files are files that contains games text used in Nintendo games.
 The tool can translate most of the text to random languages and then translate it back to english/or any other language.
 
+![Screenshot](Preview1.PNG)
+
 ## How?
 With [CLMS](https://github.com/KillzXGaming/CLMS) the program can open .msbt files and edit it,
 so the program opens the .msbt file then it creates a temp file so that a python program (converted to exe) can
