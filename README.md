@@ -29,6 +29,8 @@ I use c# and python and not only C# because I can't find any package for C# that
 8. Once finished, you should have an output folder with every `.msbt` file in it, located in the same path as your `MSBTRando.exe`.
 9. **Load** the output folder as a mod (with the correct path).
 
+**Note:** Keep an eye on the console for any errors because it's only a test release.
+
 Have fun!
 
 ## Why?
