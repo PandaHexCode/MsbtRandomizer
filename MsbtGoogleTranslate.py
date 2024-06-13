@@ -1,6 +1,4 @@
 import random
-import concurrent.futures
-import os
 import sys
 import traceback
 from deep_translator import GoogleTranslator
@@ -17,8 +15,17 @@ all_languages = [
     "uz", "vi", "cy", "xh", "yi", "yo", "zu"
 ]
 
+cuted_languages = [
+    "hy", "as", "ay", "bm", "eu", "be", "bho", "bg", "ceb", "ny", "zh-CN", "zh-TW", "dv", 
+    "doi", "et", "ee", "tl", "fy", "ka", "gn", "hi", "hmn", "ig", "ilo", "jw", "kk", "km", 
+    "rw", "gom", "kri", "ku", "ckb", "ky", "lo", "lv", "ln", "lg", "mai", "mg", "mni-Mtei", 
+    "lus", "mn", "my", "ne", "or", "om", "ps", "qu", "sm", "sa", "gd", "nso", "st", "sn", 
+    "sd", "si", "so", "su", "tg", "ta", "tt", "te", "th", "ti", "ts", "tk", "ak", "ug", 
+    "xh", "yi", "yo", "zu"
+]
+
 def translate_to_random_language(text):
-    dest_language = random.choice(all_languages)
+    dest_language = random.choice(cuted_languages)
     translated_text = text
     try:
         #print ("TTT" + translated_text)
