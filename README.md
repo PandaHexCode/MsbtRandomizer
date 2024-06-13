@@ -8,10 +8,14 @@ The tool can translate most of the text to random languages and then translate i
 ![Screenshot](Preview1.PNG)
 
 ## How?
-With [CLMS](https://github.com/KillzXGaming/CLMS) the program can open .msbt files and edit it,
-so the program opens the .msbt file then it creates a temp file so that a python program (converted to exe) can
-translate it to random languages and back with [deep-translator](https://pypi.org/project/deep-translator/)
-I use c# and python and not only C# because I can't find any package for C# that doesn't require a API-key.
+
+With [CLMS](https://github.com/KillzXGaming/CLMS), the program can open and edit `.msbt` files.
+
+1. The C# program opens the `.msbt` file.
+2. A temporary file is created for a Python script (converted to an executable (Located at program-path/resources/)) to translate the content to random languages and back using [deep-translator](https://pypi.org/project/deep-translator/).
+3. The C# program converts the new temporary file back to `.msbt` format.
+
+I use both C# and Python because I couldn't find a C# package that doesn't require an API key.
 
 ## Setup
 
