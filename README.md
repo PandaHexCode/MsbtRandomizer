@@ -15,12 +15,18 @@ translate it to random languages and bakc with [Googletrans]([https://github.com
 I use c# and python and not only C# because I can't find any package for C# that doesn't require a API-key.
 
 ## Setup
-Download the newest release from the Releases tab and unzip it.
-Open the MSBTRando.exe file (If it crashes you need to install dotnet8)
-Select a language folder from your game romfs(You need to have a dump of your game romfs)
-Write your end output language code (That language that should be the output language) ("en" = English, "de" = German, ...) 
-Press "Start"
-And now you need to wait, that Process can take 30minutes- 1hour+
-If it is finish you should have a output folder with every .msbt in it in the path where your MSBTRando.exe is.
-You need to load that as a mod(With the right path).
+
+1. **Download** the newest release from the Releases tab and unzip it.
+2. **Open** the `MSBTRando.exe` file.
+   - If it crashes, you need to install .NET 8.
+3. **Select** a language folder from your game `romfs` (you need to have a dump of your game `romfs`).
+4. **Write** your desired output language code:
+   - "en" for English
+   - "de" for German
+   - etc.
+5. **Press** "Start".
+6. **Wait** for the process to complete. This can take 30 minutes to 1 hour or more.
+7. Once finished, you should have an output folder with every `.msbt` file in it, located in the same path as your `MSBTRando.exe`.
+8. **Load** the output folder as a mod (with the correct path).
+
 Have fun!
