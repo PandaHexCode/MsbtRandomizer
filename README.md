@@ -30,7 +30,7 @@ I use both C# and Python because I couldn't find a C# package that doesn't requi
    - etc.
 5. **Press** "Start".
 6. **Press** "Start" for the file you want to auto-translate.
-   - **Note:** Avoid starting too many file edits at once, as this can lead to Google timing you out for minutes or even days.
+   - **Note:** Avoid starting too many file edits at once(Try it maybe with 3-10), as this can lead to Google timing you out for minutes or even days.
 7. **Wait** for the process to complete. This can take 30 minutes to 1 hour or more.
 8. Once finished, you should have an output folder with every `.msbt` file in it, located in the same path as your `MSBTRando.exe`.
 9. **Load** the output folder as a mod (with the correct path).
