@@ -15,7 +15,8 @@ I use c# and python and not only C# because I can't find any package for C# that
 
 1. **Download** the newest release from the Releases tab and unzip it.
 2. **Open** the `MSBTRando.exe` file.
-   - If it crashes, you need to install .NET 8.
+   - If it crashes make sure you have "[dotnet 8.0 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)"
+     installed for your platform, if it still doesn't start please report the error.
 3. **Select** a language folder from your game `romfs` (you need to have a dump of your game `romfs`).
 4. **Write** your desired output language code:
    - "en" for English
