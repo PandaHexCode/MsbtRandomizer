@@ -2,6 +2,7 @@ import random
 import sys
 import traceback
 from deep_translator import GoogleTranslator
+import time
 
 all_languages = [
     "af", "sq", "am", "ar", "hy", "as", "ay", "az", "bm", "eu", "be", "bn", "bho", "bs", "bg", "ca", 
@@ -37,9 +38,9 @@ def translate_to_random_language(text):
     except Exception as ex:
         print(str(ex) + " " + dest_language)
         if(str(ex).startswith("Server Error:")):
-            save_to_file(str(args[2]), content)
-            print("\nEND Because of error, suscefully created a temp save\n")
-            quit()
+            print("\nEND Because of error, waiting to retry(Dont press any buttons)\n")
+            time.sleep(180)
+            return translate_to_random_language(text)
             
     return translated_text
 
@@ -70,15 +71,15 @@ try:
     linesCount = str(len(lines) - 1)
     progressPath = str(args[4])
     translationsCount = int(args[5])
+    newContent = ""
 
     for line in lines:
         try:
             l = line
             for k in range(translationsCount):
-                 t = str(translate_to_random_language(str(l)))
-                 l = t
+                l =  str(translate_to_random_language(str(l)))
             l = translate_to_message(l, outputLanguageCode)
-            content = content + l + "##!#"
+            newContent = newContent + l + "##!#"
             m = f"{i} from {linesCount}"
             save_to_file(progressPath, str(m))
         except Exception as ex:
@@ -86,7 +87,7 @@ try:
             continue
         i = i + 1
 
-    save_to_file(str(args[2]), content)
+    save_to_file(str(args[2]), newContent)
 except Exception as ex:
      print(str(ex))
      while True:
