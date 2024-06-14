@@ -19,6 +19,10 @@ namespace MSBTRando.Windows{
 
         public int translatationsCount = 5;
 
+        public int currentlyInProgress = 0;
+
+        public List<MSBTPyFileEdit> editNext = new List<MSBTPyFileEdit>();
+
         public override void Draw(){
             ImGui.InputText("##p2", ref inputRefs[1], 1000);
             Manager.SelectFolderButton(ref inputRefs[1], "Language folder");
@@ -46,9 +50,16 @@ namespace MSBTRando.Windows{
             if (ImGui.Button("Kill")){
                 Manager.TryToKillByName("MsbtGoogleTranslate");
                 this.edits.Clear();
+                this.currentlyInProgress = 0;
             }
 
             Manager.Tooltip("Kill the translator if it is still open somehow in the background.");
+
+            if (this.currentlyInProgress > 0){
+                ImGui.Spacing();
+                ImGui.Text($"Currently in edit: {this.currentlyInProgress}");
+                ImGui.Spacing();
+            }
 
             foreach(MSBTPyFileEdit edit in this.edits){
                 try{
@@ -63,6 +74,14 @@ namespace MSBTRando.Windows{
                         ImGui.SameLine();
                         if (ImGui.Button("Start##" + edit.refName))
                             edit.Start(edit.file);
+                        ImGui.SameLine();
+                        if (this.editNext.Contains(edit)) {
+                            if (ImGui.Button("Remove start as next" + edit.refName))
+                                this.editNext.Remove(edit);
+                        }else {
+                            if (ImGui.Button("Start as next" + edit.refName))
+                                this.editNext.Add(edit);
+                        }
                         continue;
                     }
                     ImGui.SameLine();
@@ -155,6 +174,7 @@ namespace MSBTRando.Windows{
 
         public void Start(string path){
             this.isStarted = true;
+            this.window.currentlyInProgress++;
 
             string content = string.Empty;
 
@@ -162,6 +182,8 @@ namespace MSBTRando.Windows{
             foreach (Message message in msbt.Messages.Values){
                  content = content + message.Text + "##!#";
             }
+
+            msbt = null;
 
             string tempFilePath = "Temp_" + Path.GetFileNameWithoutExtension(path);
             Manager.SaveFile(tempFilePath, content);
@@ -177,13 +199,12 @@ namespace MSBTRando.Windows{
         }
 
        public void Save(string path, string refMsbtPath){
-            string[] lines = Manager.GetFileIn(path).Split("##!#");
-
             int i = 0;
             var msbt = new MSBT(File.OpenRead(refMsbtPath), false);
+            string[] lines = Manager.GetFileIn(path).Split("##!#");
             foreach (Message message in msbt.Messages.Values){
                 try{
-                    message.Text = lines[i];
+                    msbt.Messages.Values.ElementAt(i).Text = lines[i];
                 }catch(IndexOutOfRangeException ex){
                     break;
                 }catch(Exception ex){
@@ -200,6 +221,16 @@ namespace MSBTRando.Windows{
                     File.Delete(outPath);
                 File.WriteAllBytes(outPath, msbt.Save());
                 Console.WriteLine("Saved to " + outPath);
+            }catch(Exception ex){
+                Console.WriteLine(ex.Message);
+            }
+            this.isStarted = false;
+            this.window.currentlyInProgress--;
+            try{
+                if (this.window.editNext.Count != 0){
+                    this.window.editNext[0].Start(this.window.editNext[0].file);
+                    this.window.editNext.RemoveAt(0);
+                }
             }catch(Exception ex){
                 Console.WriteLine(ex.Message);
             }
