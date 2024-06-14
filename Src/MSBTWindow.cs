@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+using ImGuiNET;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,10 +17,23 @@ namespace MSBTRando.Windows{
 
         public bool autoStart = false;
 
+        public int translatationsCount = 5;
+
         public override void Draw(){
             ImGui.InputText("##p2", ref inputRefs[1], 1000);
             Manager.SelectFolderButton(ref inputRefs[1], "Language folder");
+            ImGui.SetNextItemWidth(25);
             ImGui.InputText("End output language code", ref this.endOutput, 10);
+
+            ImGui.SameLine();
+            ImGui.SetNextItemWidth(65);
+            ImGui.InputInt("Translations count", ref this.translatationsCount);
+            Manager.Tooltip("How often a message get randomly translated, can affect masive the progress duration.");
+
+            if (this.translatationsCount < 0)
+                this.translatationsCount = 0;
+            if (this.translatationsCount > 10)
+                this.translatationsCount = 10;
 
             if (string.IsNullOrEmpty(this.outputFolderPath))
                 this.outputFolderPath = Environment.ProcessPath.Replace("MSBTRando.exe", "\\output\\");
@@ -39,6 +52,11 @@ namespace MSBTRando.Windows{
 
             foreach(MSBTPyFileEdit edit in this.edits){
                 try{
+                    ImGui.Spacing();
+                    if (File.Exists(this.outputFolderPath + edit.refName)){
+                        ImGui.TextWrapped("[Already exits]");
+                        ImGui.SameLine();
+                    }
                     if (!edit.isStarted){
                         ImGui.TextWrapped(Path.GetFileNameWithoutExtension(edit.file));
                         ImGui.SameLine();
@@ -46,6 +64,7 @@ namespace MSBTRando.Windows{
                             edit.Start(edit.file);
                         continue;
                     }
+                    ImGui.SameLine();
                     ImGui.TextWrapped("Watching for " + edit.finishFilePath);
                     ImGui.TextWrapped(Manager.GetFileIn(edit.progressPath));
                     if (File.Exists(edit.finishFilePath)){
@@ -111,7 +130,7 @@ namespace MSBTRando.Windows{
                 File.Delete(this.finishFilePath);
             if (File.Exists(this.progressPath))
                 File.Delete(this.progressPath);
-            Manager.StartProcess(msbtTransPyPath, new string[5] { "", tempFilePath, this.finishFilePath, this.window.endOutput, this.progressPath });
+            Manager.StartProcess(msbtTransPyPath, new string[6] { "", tempFilePath, this.finishFilePath, this.window.endOutput, this.progressPath, this.window.translatationsCount.ToString() });
         }
 
        public void Save(string path, string refMsbtPath){
