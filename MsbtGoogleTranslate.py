@@ -24,15 +24,22 @@ cuted_languages = [
     "xh", "yi", "yo", "zu"
 ]
 
+content = ""
+args = sys.argv
+
 def translate_to_random_language(text):
     dest_language = random.choice(cuted_languages)
     translated_text = text
     try:
         #print ("TTT" + translated_text)
-        t = GoogleTranslator(source="auto", target=dest_language).translate(text)
-        translated_text = t
+        translated_text = GoogleTranslator(source="auto", target=dest_language).translate(text)
     except Exception as ex:
         print(str(ex) + " " + dest_language)
+        if(str(ex).startswith("Server Error:")):
+            save_to_file(str(args[2]), content)
+            print("\nEND Because of error, suscefully created a temp save\n")
+            quit()
+            
     return translated_text
 
 def translate_to_message(text, dest):
@@ -48,7 +55,6 @@ def save_to_file(filename, fcontent):
         file.write(fcontent)
 
 try:
-    args = sys.argv
 
     path = str(args[1])
 
@@ -57,22 +63,24 @@ try:
 
     lines = content.split('##!#')
 
-    content = ""
-
     i = 0
+
+    outputLanguageCode = str(args[3])
+    linesCount = str(len(lines))
+    progressPath = str(args[4])
+    translationsCount = int(args[5])
+
     for line in lines:
         try:
             l = line
-            for k in range(5):
-                t = str(translate_to_random_language(str(l)))
-                l = t
-                #print(l)
-            l = translate_to_message(l, str(args[3]))
+            for k in range(translationsCount):
+                 t = str(translate_to_random_language(str(l)))
+                 l = t
+            l = translate_to_message(l, outputLanguageCode)
 
             content = content + l + "##!#"
-            m = str(i) + " from " + str(len(lines))
-            save_to_file(str(args[4]), str(m))
-            #print(m)
+            m = f"{i} from {linesCount}"
+            save_to_file(progressPath, str(m))
         except Exception as ex:
             print(f"{traceback.format_exc().splitlines()[-1]}: {str(ex)}")
             continue
