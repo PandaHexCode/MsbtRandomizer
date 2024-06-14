@@ -21,7 +21,8 @@ cuted_languages = [
     "rw", "gom", "kri", "ku", "ckb", "ky", "lo", "lv", "ln", "lg", "mai", "mg", "mni-Mtei", 
     "lus", "mn", "my", "ne", "or", "om", "ps", "qu", "sm", "sa", "gd", "nso", "st", "sn", 
     "sd", "si", "so", "su", "tg", "ta", "tt", "te", "th", "ti", "ts", "tk", "ak", "ug", 
-    "xh", "yi", "yo", "zu"
+    "xh", "yi", "yo", "zu", "fr", "ur", "ay", "dv", "mni-Mtei", "lus", "gn", "ay", "dv", 
+    "mni-Mtei", "lus", "gn"#Copied hard languages multiple times
 ]
 
 content = ""
@@ -66,7 +67,7 @@ try:
     i = 0
 
     outputLanguageCode = str(args[3])
-    linesCount = str(len(lines))
+    linesCount = str(len(lines) - 1)
     progressPath = str(args[4])
     translationsCount = int(args[5])
 
@@ -77,7 +78,6 @@ try:
                  t = str(translate_to_random_language(str(l)))
                  l = t
             l = translate_to_message(l, outputLanguageCode)
-
             content = content + l + "##!#"
             m = f"{i} from {linesCount}"
             save_to_file(progressPath, str(m))
