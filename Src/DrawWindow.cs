@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +30,7 @@ namespace MSBTRando.Windows{
         public static List<DrawWindow> drawWindows = new List<DrawWindow>();
 
         public static void InitWindows(){
-            InitWindow(new MSBTWindow(), "MSBTRando", 10, true, false, 215, 310);
+            InitWindow(new MSBTWindow(), "MSBTRando", 10, true, false, 455, 310);
         }
 
         public static void InitWindow(DrawWindow window, string name, int inputRefsSize, bool autoShow, bool isAdvanced, int minX, int minY){
