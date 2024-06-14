@@ -59,6 +59,7 @@ namespace MSBTRando.Windows{
                     }
                     if (!edit.isStarted){
                         ImGui.TextWrapped(Path.GetFileNameWithoutExtension(edit.file));
+                        CheckTooltips(Path.GetFileNameWithoutExtension(edit.file));
                         ImGui.SameLine();
                         if (ImGui.Button("Start##" + edit.refName))
                             edit.Start(edit.file);
@@ -90,6 +91,48 @@ namespace MSBTRando.Windows{
                     continue;
                 }
             }
+        }
+
+        private readonly Dictionary<string, string> _stageTooltips = new Dictionary<string, string>{
+        { "aaa", "Mario's House" },
+        { "aji", "X-Naut Fortress" },
+        { "bom", "Fahr Outpost" },
+        { "bti", "Battle Stages" },
+        { "dou", "Pirates Grotto" },
+        { "eki", "Riverside Station" },
+        { "end", "End Credits" },
+        { "gon", "Hooktail Castle" },
+        { "gor", "Rogueport" },
+        { "gra", "Twilight Trail" },
+        { "hei", "Petal Meadows" },
+        { "hom", "Excess Express cutscenes, etc." },
+        { "jin", "Creepy Steeple" },
+        { "jon", "Pit of 100 Trials" },
+        { "kpa", "Bowser Missions" },
+        { "las", "Palace of Shadow" },
+        { "moo", "The Moon" },
+        { "mri", "The Great Tree" },
+        { "muj", "Keelhaul Key" },
+        { "nok", "Petalburg" },
+        { "pik", "Poshley Heights" },
+        { "rsh", "Excess Express" },
+        { "stg", "Backgrounds" },
+        { "sys", "Chapter Intro screens, etc." },
+        { "tik", "Rogueport Sewers" },
+        { "tou", "Glitzville" },
+        { "usu", "Twilight Town" },
+        { "win", "Boggly Woods" },
+        { "yuu", "Pianta Parlor Minigames" }
+        };
+
+        public void CheckTooltips(string fileName){/*Thanks to https://docs.google.com/document/d/1y6c46fNJ6jesd9as-yB2K4eGmk-WATaGxFX6Os4NweM/edit*/
+            foreach (var stageTooltip in _stageTooltips)
+                CheckStageTooltip(fileName, stageTooltip.Key, stageTooltip.Value);
+        }
+
+        public void CheckStageTooltip(string fileName, string checkName, string stageName){
+            if (fileName.StartsWith(checkName))
+                Manager.Tooltip(stageName);
         }
 
     }
