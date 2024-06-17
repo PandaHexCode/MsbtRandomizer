@@ -23,6 +23,8 @@ namespace MSBTRando.Windows{
 
         public List<MSBTPyFileEdit> editNext = new List<MSBTPyFileEdit>();
 
+        public bool onlyConvert = false;
+
         public override void Draw(){
             ImGui.InputText("##p2", ref inputRefs[1], 1000);
             Manager.SelectFolderButton(ref inputRefs[1], "Language folder");
@@ -39,10 +41,21 @@ namespace MSBTRando.Windows{
             if (this.translatationsCount > 10)
                 this.translatationsCount = 10;
 
+            ImGui.SameLine();
+            ImGui.Checkbox("Only convert", ref this.onlyConvert);
+            Manager.Tooltip("Enable this if you have already the Finish_x files and just want it to convert\n" +
+                "it with a newer version of the program.");
+
+            if (this.onlyConvert){
+                ImGui.SameLine();
+                ImGui.Checkbox("Auto start", ref autoStart);
+            }else
+                this.autoStart = false;
+
             if (string.IsNullOrEmpty(this.outputFolderPath))
                 this.outputFolderPath = Environment.ProcessPath.Replace("MSBTRando.exe", "\\output\\");
 
-            if (ImGui.Button("Start"))
+            if (ImGui.Button("Open##55"))
                 StartFolder();
 
             ImGui.SameLine();
@@ -58,10 +71,14 @@ namespace MSBTRando.Windows{
             if (this.currentlyInProgress > 0){
                 ImGui.Spacing();
                 ImGui.Text($"Currently in edit: {this.currentlyInProgress}");
+                if (this.editNext.Count > 0){
+                    ImGui.SameLine();
+                    ImGui.Text($"Currently waiting: {this.editNext.Count}");
+                }
                 ImGui.Spacing();
             }
 
-            foreach(MSBTPyFileEdit edit in this.edits){
+            foreach (MSBTPyFileEdit edit in this.edits){
                 try{
                     ImGui.Spacing();
                     if (File.Exists(this.outputFolderPath + edit.refName)){
@@ -92,7 +109,7 @@ namespace MSBTRando.Windows{
                         edit.finishFilePath = string.Empty;
                     }
                 }catch(Exception ex){
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Message + ex.StackTrace);
                     continue;
                 }
             }
@@ -101,9 +118,11 @@ namespace MSBTRando.Windows{
         public void StartFolder(){
             foreach(string file in Directory.GetFiles(this.inputRefs[1])){
                 try{
+                    if (!file.EndsWith(".msbt"))
+                        continue;
                     MSBTPyFileEdit edit = new MSBTPyFileEdit(this, file);
                     this.edits.Add(edit);
-                    if (this.autoStart)
+                    if (this.autoStart && !File.Exists(this.outputFolderPath + Path.GetFileName(file)))
                         edit.Start(file);
                 }catch(Exception ex){
                     Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
@@ -160,8 +179,25 @@ namespace MSBTRando.Windows{
                 int val = int.Parse(match.Value);
                 return val;
             }else{
+                Console.WriteLine("Not a tag found " + tag);
                 return 0;
             }
+        }
+
+        public static string LineFixer(string line){
+            string pattern = @"<[^>]+?_\d{1,2}>";
+
+            string replaced = Regex.Replace(line, pattern, match => {
+                bool o = false;
+                if (match.Value.Contains("/"))
+                    o = true;
+                string numberPart = Regex.Match(match.Value, @"\d{1,2}").Value;
+                if(o)
+                    return $"</Tag_{numberPart}>";
+                return $"<Tag_{numberPart}>";
+            });
+
+            return replaced;
         }
 
     }
@@ -183,7 +219,14 @@ namespace MSBTRando.Windows{
         }
 
         public void Start(string path){
+            string tempFilePath = "Temp_" + Path.GetFileNameWithoutExtension(path);
+
             this.isStarted = true;
+
+            if (this.window.onlyConvert){
+                this.finishFilePath = tempFilePath.Replace("Temp", "Finish");
+                return;
+            }
             this.window.currentlyInProgress++;
 
             string content = string.Empty;
@@ -195,7 +238,6 @@ namespace MSBTRando.Windows{
 
             msbt = null;
 
-            string tempFilePath = "Temp_" + Path.GetFileNameWithoutExtension(path);
             Manager.SaveFile(tempFilePath, content);
 
             string msbtTransPyPath = Environment.ProcessPath.Replace("MSBTRando.exe", "\\resources\\MsbtGoogleTranslate.exe");
@@ -210,10 +252,16 @@ namespace MSBTRando.Windows{
 
        public void Save(string path, string refMsbtPath){
             int i = 0;
+            if (!File.Exists(refMsbtPath)){
+                Console.WriteLine("Can't find " + refMsbtPath);
+                return;
+            }
+            Console.WriteLine(refMsbtPath);
             var msbt = new MSBT(File.OpenRead(refMsbtPath), false);
             string[] lines = Manager.GetFileIn(path).Split("##!#");
             foreach (Message message in msbt.Messages.Values){
                 try{
+                    lines[i] = MSBTWindow.LineFixer(lines[i]);
                     msbt.Messages.Values.ElementAt(i).Text = lines[i];
                 }catch(IndexOutOfRangeException ex){
                     break;
@@ -242,7 +290,7 @@ namespace MSBTRando.Windows{
                     this.window.editNext.RemoveAt(0);
                 }
             }catch(Exception ex){
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message + ex.StackTrace);
             }
         }
     }
