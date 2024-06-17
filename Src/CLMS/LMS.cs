@@ -1,4 +1,5 @@
-﻿using Syroot.BinaryData;
+using MSBTRando.Windows;
+using Syroot.BinaryData;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -418,7 +419,7 @@ namespace CLMS
                 switch (Type)
                 {
                     case LMSDictionaryKeyType.Labels:
-                        return dictionary[(string)key];
+                           return dictionary[(string)key];
                     case LMSDictionaryKeyType.Indices:
                         if (key is string)
                         {
@@ -759,45 +760,76 @@ namespace CLMS
 
                     if (processTag)
                     {
-                        string tagIdStr = value.Substring(i + 5, value.IndexOf(Tag.SeparatorChars[1], i + 5) - i - 5);
-                        int tagId = Convert.ToInt32(tagIdStr);
+                        string tagIdStr = string.Empty;
+                        try
+                        {
+                            tagIdStr = value.Substring(i + 5, value.IndexOf(Tag.SeparatorChars[1], i + 5) - i - 5);
 
+                        }catch(Exception ex)
+                        {
+                            Console.WriteLine(Text);
+                        }
+                        int tagId = 0;
+                        try{
+                            tagId = Convert.ToInt32(tagIdStr);
+                        }catch(Exception ex){
+                            tagId = MSBTRando.Windows.MSBTWindow.BrokenTagIdFixer(tagIdStr);
+                        }
                         // proper exception handling yay :)
                         if (tagId >= TagCount)
                         {
-                            throw new KeyNotFoundException($"Tag {tagId} is not in the Tags!");
+                            i += 6 + tagIdStr.Length;
                         }
-
-                        if (stringBuf.Length > 0)
+                        else
                         {
-                            contents.Add(stringBuf);
-                            stringBuf = "";
-                        }
-                        contents.Add(GetTagByIndex(tagId));
-                        lastChar = '\0';
 
-                        i += 6 + tagIdStr.Length;
+                            if (stringBuf.Length > 0)
+                            {
+                                contents.Add(stringBuf);
+                                stringBuf = "";
+                            }
+                            contents.Add(GetTagByIndex(tagId));
+                            lastChar = '\0';
+
+                            i += 6 + tagIdStr.Length;
+                        }
                     }
                     else if (processTagEnd)
                     {
                         string tagIdStr = value.Substring(i + 6, value.IndexOf(Tag.SeparatorChars[1], i + 6) - i - 6);
-                        int tagId = Convert.ToInt32(tagIdStr);
+                        int tagId = 0;
+                        try
+                        {
+                            tagId = Convert.ToInt32(tagIdStr);
+                        }
+                        catch (Exception ex)
+                        {
+                            tagId = MSBTRando.Windows.MSBTWindow.BrokenTagIdFixer(tagIdStr);
+                        }
+                        // proper exception handling yay :)
+                        if (tagId >= TagCount)
+                        {
+                            i += 6 + tagIdStr.Length;
+                        }
 
                         // proper exception handling yay :)
                         if (tagId >= TagEndCount)
                         {
-                            throw new KeyNotFoundException($"TagEnd {tagId} is not in the TagEnds!");
+                            i += 7 + tagIdStr.Length;
                         }
-
-                        if (stringBuf.Length > 0)
+                        else
                         {
-                            contents.Add(stringBuf);
-                            stringBuf = "";
-                        }
-                        contents.Add(GetTagEndByIndex(tagId));
-                        lastChar = '\0';
 
-                        i += 7 + tagIdStr.Length;
+                            if (stringBuf.Length > 0)
+                            {
+                                contents.Add(stringBuf);
+                                stringBuf = "";
+                            }
+                            contents.Add(GetTagEndByIndex(tagId));
+                            lastChar = '\0';
+
+                            i += 7 + tagIdStr.Length;
+                        }
                     }
                     else
                     {
