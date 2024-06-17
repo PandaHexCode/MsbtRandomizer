@@ -76,10 +76,10 @@ namespace MSBTRando.Windows{
                             edit.Start(edit.file);
                         ImGui.SameLine();
                         if (this.editNext.Contains(edit)) {
-                            if (ImGui.Button("Remove start as next" + edit.refName))
+                            if (ImGui.Button("Remove start as next##" + edit.refName))
                                 this.editNext.Remove(edit);
                         }else {
-                            if (ImGui.Button("Start as next" + edit.refName))
+                            if (ImGui.Button("Start as next##" + edit.refName))
                                 this.editNext.Add(edit);
                         }
                         continue;
@@ -152,6 +152,16 @@ namespace MSBTRando.Windows{
         public void CheckStageTooltip(string fileName, string checkName, string stageName){
             if (fileName.StartsWith(checkName))
                 Manager.Tooltip(stageName);
+        }
+        
+        public static int BrokenTagIdFixer(string tag){
+            Match match = Regex.Match(tag, @"\d+");
+            if (match.Success){
+                int val = int.Parse(match.Value);
+                return val;
+            }else{
+                return 0;
+            }
         }
 
     }
@@ -235,7 +245,6 @@ namespace MSBTRando.Windows{
                 Console.WriteLine(ex.Message);
             }
         }
-
     }
 
 }
