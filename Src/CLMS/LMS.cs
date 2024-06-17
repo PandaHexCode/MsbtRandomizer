@@ -765,8 +765,7 @@ namespace CLMS
                         {
                             tagIdStr = value.Substring(i + 5, value.IndexOf(Tag.SeparatorChars[1], i + 5) - i - 5);
 
-                        }catch(Exception ex)
-                        {
+                        }catch(Exception ex){
                             Console.WriteLine(Text);
                         }
                         int tagId = 0;
@@ -775,7 +774,6 @@ namespace CLMS
                         }catch(Exception ex){
                             tagId = MSBTRando.Windows.MSBTWindow.BrokenTagIdFixer(tagIdStr);
                         }
-                        // proper exception handling yay :)
                         if (tagId >= TagCount)
                         {
                             i += 6 + tagIdStr.Length;
@@ -796,7 +794,16 @@ namespace CLMS
                     }
                     else if (processTagEnd)
                     {
-                        string tagIdStr = value.Substring(i + 6, value.IndexOf(Tag.SeparatorChars[1], i + 6) - i - 6);
+                        string tagIdStr = string.Empty;
+                        try
+                        {
+                            tagIdStr = value.Substring(i + 5, value.IndexOf(Tag.SeparatorChars[1], i + 5) - i - 5);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(Text);
+                        }
                         int tagId = 0;
                         try
                         {
@@ -806,7 +813,7 @@ namespace CLMS
                         {
                             tagId = MSBTRando.Windows.MSBTWindow.BrokenTagIdFixer(tagIdStr);
                         }
-                        // proper exception handling yay :)
+
                         if (tagId >= TagCount)
                         {
                             i += 6 + tagIdStr.Length;
