@@ -1,4 +1,4 @@
-# Msbt Randomizer
+# Msbt Randomizer (Msbt Google translator)
 
 Automatically create google translated mods (Like Paper Mario Remake but google translated) for many languages! (English, German, ...)
 
