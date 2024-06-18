@@ -1,4 +1,4 @@
-﻿using Silk.NET.Windowing;
+using Silk.NET.Windowing;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
@@ -19,6 +19,9 @@ namespace MSBTRando.Windows{
         public static float currentVersion = 1.1f;
         public static bool showAdvancedButtons = false;
         public static int currentSelectedScreen = 0;
+
+        public enum Game { NoTarget = -1, PaperMarioRemake = 0 };
+        public static Game game = 0;
 
         public void CalculateColors() {
             colors[0] = Manager.HexToVector4("403037");
@@ -130,6 +133,10 @@ namespace MSBTRando.Windows{
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu("Settings")){
+                    ImGui.TextWrapped("Tooltips");
+
+                    bool temp = true;/*TODO*/
+                    ImGui.Checkbox("Paper Mario Remake", ref temp);
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu("Other")){
