@@ -706,6 +706,7 @@ namespace CLMS
                 int tagCount = 0;
                 foreach (var cParam in Contents)
                 {
+                   
                     if (cParam is string)
                     {
                         text += ((string)cParam).Replace($"{Tag.SeparatorChars[0]}", $"\\{Tag.SeparatorChars[0]}");
@@ -735,6 +736,7 @@ namespace CLMS
                 string stringBuf = "";
                 char lastChar = '\0';
                 int i = 0;
+
                 while (i < value.Length)
                 {
                     bool processTag = false;
@@ -780,7 +782,6 @@ namespace CLMS
                         }
                         else
                         {
-
                             if (stringBuf.Length > 0)
                             {
                                 contents.Add(stringBuf);
@@ -795,40 +796,27 @@ namespace CLMS
                     else if (processTagEnd)
                     {
                         string tagIdStr = string.Empty;
-                        try
-                        {
-                            tagIdStr = value.Substring(i + 5, value.IndexOf(Tag.SeparatorChars[1], i + 5) - i - 5);
 
-                        }
-                        catch (Exception ex)
-                        {
+                        try{
+                            tagIdStr = value.Substring(i + 6, value.IndexOf(Tag.SeparatorChars[1], i + 6) - i - 6);
+                        }catch(Exception ex){
                             Console.WriteLine(Text);
                         }
+
                         int tagId = 0;
-                        try
-                        {
+
+                        try{
                             tagId = Convert.ToInt32(tagIdStr);
-                        }
-                        catch (Exception ex)
-                        {
+                        }catch(Exception ex){
                             tagId = MSBTRando.Windows.MSBTWindow.BrokenTagIdFixer(tagIdStr);
                         }
 
-                        if (tagId >= TagCount)
-                        {
-                            i += 6 + tagIdStr.Length;
-                        }
-
-                        // proper exception handling yay :)
                         if (tagId >= TagEndCount)
                         {
                             i += 7 + tagIdStr.Length;
                         }
-                        else
-                        {
-
-                            if (stringBuf.Length > 0)
-                            {
+                        else{
+                            if (stringBuf.Length > 0){
                                 contents.Add(stringBuf);
                                 stringBuf = "";
                             }
