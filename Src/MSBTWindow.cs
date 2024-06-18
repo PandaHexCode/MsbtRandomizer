@@ -131,7 +131,7 @@ namespace MSBTRando.Windows{
             }
         }
 
-        private readonly Dictionary<string, string> _stageTooltips = new Dictionary<string, string>{
+        private readonly Dictionary<string, string> _stageTooltipsPM2 = new Dictionary<string, string>{
         { "aaa", "Mario's House" },
         { "aji", "X-Naut Fortress" },
         { "bom", "Fahr Outpost" },
@@ -155,7 +155,7 @@ namespace MSBTRando.Windows{
         { "pik", "Poshley Heights" },
         { "rsh", "Excess Express" },
         { "stg", "Backgrounds" },
-        { "sys", "Chapter Intro screens, etc." },
+        { "dmo", "Opening / Intro" },
         { "tik", "Rogueport Sewers" },
         { "tou", "Glitzville" },
         { "usu", "Twilight Town" },
@@ -164,7 +164,7 @@ namespace MSBTRando.Windows{
         };
 
         public void CheckTooltips(string fileName){/*Thanks to https://docs.google.com/document/d/1y6c46fNJ6jesd9as-yB2K4eGmk-WATaGxFX6Os4NweM/edit*/
-            foreach (var stageTooltip in _stageTooltips)
+            foreach (var stageTooltip in this._stageTooltipsPM2)
                 CheckStageTooltip(fileName, stageTooltip.Key, stageTooltip.Value);
         }
 
@@ -187,15 +187,24 @@ namespace MSBTRando.Windows{
         public static string LineFixer(string line){
             string pattern = @"<[^>]+?_\d{1,2}>";
 
+            bool hasTagEnd = false;
+
             string replaced = Regex.Replace(line, pattern, match => {
                 bool o = false;
                 if (match.Value.Contains("/"))
                     o = true;
+
                 string numberPart = Regex.Match(match.Value, @"\d{1,2}").Value;
-                if(o)
+                if (o){
+                    numberPart = (int.Parse(numberPart) - 1).ToString();
+                    hasTagEnd = true;
                     return $"</Tag_{numberPart}>";
+                }
                 return $"<Tag_{numberPart}>";
             });
+
+            if (!hasTagEnd)
+                replaced = replaced + "</Tag_0>";
 
             return replaced;
         }
@@ -256,8 +265,9 @@ namespace MSBTRando.Windows{
                 Console.WriteLine("Can't find " + refMsbtPath);
                 return;
             }
-            Console.WriteLine(refMsbtPath);
+
             var msbt = new MSBT(File.OpenRead(refMsbtPath), false);
+
             string[] lines = Manager.GetFileIn(path).Split("##!#");
             foreach (Message message in msbt.Messages.Values){
                 try{
