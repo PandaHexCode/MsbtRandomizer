@@ -23,6 +23,8 @@ I use both C# and Python because I couldn't find a C# package that doesn't requi
 
 ## Setup
 
+**Video-Tutorial**: [Video](https://www.youtube.com/watch?v=gsKVmAUBY0c)
+
 1. **Download** the newest release from the Releases tab and unzip it.
 2. **Open** the `MSBTRando.exe` file.
    - If it crashes make sure you have "[dotnet 8.0 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)"
