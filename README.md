@@ -2,7 +2,7 @@
 
 Automatically create google translated mods (Like Paper Mario Remake but google translated) for many languages! (English, German, ...)
 
-![Screenshot](GoogleTranslated.PNG)
+![Screenshot](GoogleTranslated.png)
 
 Tested with Paper Mario: The Thousand Year Door (Remake)
 
