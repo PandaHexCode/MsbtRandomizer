@@ -1,5 +1,9 @@
 # Msbt Randomizer
 
+Automatically create google translated mods (Like Paper Mario Remake but google translated) for many languages! (English, German, ...)
+
+![Screenshot](GoogleTranslated.PNG)
+
 Tested with Paper Mario: The Thousand Year Door (Remake)
 
 MSBT files are files that contains games text used in Nintendo games.
@@ -28,10 +32,11 @@ I use both C# and Python because I couldn't find a C# package that doesn't requi
    - "en" for English
    - "de" for German
    - etc.
-5. **Press** "Start".
+5. **Press** "Open".
 6. **Press** "Start" for the file you want to auto-translate.
-   - **Note:** Avoid starting too many file edits at once(Try it maybe with 3-10), as this can lead to Google timing you out for minutes or even days.
-7. **Wait** for the process to complete. This can take 30 minutes to 1 hour or more.
+   - **Note:** Avoid starting too many file edits at once(Try it maybe with 10-14), as this can lead to Google timing you out for minutes or even days.
+   - Use the "Start as next" button so that it automatically start translating the file after one of the already translated is finished
+7. **Wait** for the process to complete. This can take 2hours to 4 hours or more.
 8. Once finished, you should have an output folder with every `.msbt` file in it, located in the same path as your `MSBTRando.exe`.
 9. **Load** the output folder as a mod (with the correct path).
 
