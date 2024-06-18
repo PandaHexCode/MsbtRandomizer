@@ -1,6 +1,6 @@
 # Msbt Randomizer (Msbt Google translator)
 
-Automatically create google translated mods (Like Paper Mario Remake but google translated) for many languages! (English, German, ...)
+Automatically creates google translated mods (Like Paper Mario Remake but google translated) for many languages! (English, German, ...)
 
 ![Screenshot](GoogleTranslated.png)
 
