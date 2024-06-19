@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using MSBTRando.Dialogs;
 using CLMS;
+using System.Globalization;
 
 namespace MSBTRando.Windows{
 
@@ -184,8 +185,34 @@ namespace MSBTRando.Windows{
             }
         }
 
+        private static string RemoveNonLatinCharacters(string input){
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in input){
+                if (IsLatinLetterOrAllowedSymbol(c)){
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static bool IsLatinLetterOrAllowedSymbol(char c){
+            UnicodeCategory category = Char.GetUnicodeCategory(c);
+            return (category == UnicodeCategory.UppercaseLetter ||
+                    category == UnicodeCategory.LowercaseLetter ||
+                    category == UnicodeCategory.DecimalDigitNumber ||
+                    category == UnicodeCategory.SpaceSeparator ||
+                    category == UnicodeCategory.OtherPunctuation ||
+                    category == UnicodeCategory.MathSymbol ||
+                    category == UnicodeCategory.CurrencySymbol ||
+                    category == UnicodeCategory.ModifierSymbol ||
+                    category == UnicodeCategory.OtherSymbol ||
+                    Char.IsSymbol(c) || Char.IsPunctuation(c));
+        }
+
         public static string LineFixer(string line){
             string pattern = @"<[^>]+?_\d{1,2}>";
+
+            line = RemoveNonLatinCharacters(line);
 
             bool hasTagEnd = false;
 
