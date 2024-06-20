@@ -26,6 +26,8 @@ namespace MSBTRando.Windows{
 
         public bool onlyConvert = false;
 
+        public bool removeNonLatinCharacters = true;
+
         public override void Draw(){
             ImGui.InputText("##p2", ref inputRefs[1], 1000);
             Manager.SelectFolderButton(ref inputRefs[1], "Language folder");
@@ -41,6 +43,13 @@ namespace MSBTRando.Windows{
                 this.translatationsCount = 0;
             if (this.translatationsCount > 10)
                 this.translatationsCount = 10;
+
+
+            ImGui.SameLine();
+            ImGui.Checkbox("Remove non latin characters", ref this.removeNonLatinCharacters);
+            Manager.Tooltip("*Only* disable that if your end ouput language uses an other font (Like asia,arabia...)\n" +
+                "If not dont disable it it can causes crashes!");
+
 
             ImGui.SameLine();
             ImGui.Checkbox("Only convert", ref this.onlyConvert);
@@ -66,8 +75,21 @@ namespace MSBTRando.Windows{
                 this.edits.Clear();
                 this.currentlyInProgress = 0;
             }
-
             Manager.Tooltip("Kill the translator if it is still open somehow in the background.");
+
+            if(this.edits.Count > 0){
+                ImGui.SameLine();
+                if(ImGui.Button("Start from order"))
+                    StartFromOrder();
+                Manager.Tooltip("Auto start files from order + give them to edit a next");
+
+                ImGui.SameLine();
+                if(ImGui.Button("Smart start from order"))
+                    SmartStartFromOrder();
+                Manager.Tooltip("Auto start files from order + give them to edit a next\n" +
+                    "Starts the important & big files first\n" +
+                    "Need to select a game from settings \nWithout finding the right files it's just starts from order.");
+            }
 
             if (this.currentlyInProgress > 0){
                 ImGui.Spacing();
@@ -91,7 +113,7 @@ namespace MSBTRando.Windows{
                         CheckTooltips(Path.GetFileNameWithoutExtension(edit.file));
                         ImGui.SameLine();
                         if (ImGui.Button("Start##" + edit.refName))
-                            edit.Start(edit.file);
+                            edit.Start();
                         ImGui.SameLine();
                         if (this.editNext.Contains(edit)) {
                             if (ImGui.Button("Remove start as next##" + edit.refName))
@@ -124,11 +146,52 @@ namespace MSBTRando.Windows{
                     MSBTPyFileEdit edit = new MSBTPyFileEdit(this, file);
                     this.edits.Add(edit);
                     if (this.autoStart && !File.Exists(this.outputFolderPath + Path.GetFileName(file)))
-                        edit.Start(file);
+                        edit.Start();
                 }catch(Exception ex){
                     Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
                     continue;
                 }
+            }
+        }
+
+        public void StartFromOrder(int count = 14){
+            if (this.edits.Count < 13)
+                count = this.edits.Count - 1;
+
+            for (int i = 0; i < count; i++){
+                if (!this.edits[i].isStarted)
+                    this.edits[i].Start();
+                else
+                    count++;
+            }
+
+            foreach (MSBTPyFileEdit edit in this.edits){
+                if (!edit.isStarted)
+                    this.editNext.Add(edit);
+            }
+        }
+
+        public void SmartStartFromOrder(){
+            if(MainWindow.game == MainWindow.Game.PaperMarioRemake){
+                StartIfFileExits("gor");
+                StartIfFileExits("tou");
+                StartIfFileExits("global");
+                StartIfFileExits("stage_global");
+                StartIfFileExits("ui");
+                StartIfFileExits("shop");
+                StartIfFileExits("hint_enemy");
+                StartIfFileExits("hint_npc");
+                StartIfFileExits("hint_party");
+                StartIfFileExits("gor_shop");
+                StartIfFileExits("field_tutorial");
+                StartIfFileExits("item");
+                StartIfFileExits("peach");
+            }else 
+                return;/*TODO*/
+
+            foreach (MSBTPyFileEdit edit in this.edits){
+                if (!edit.isStarted)
+                    this.editNext.Add(edit);
             }
         }
 
@@ -173,7 +236,24 @@ namespace MSBTRando.Windows{
             if (fileName.StartsWith(checkName))
                 Manager.Tooltip(stageName);
         }
+
+        public MSBTPyFileEdit GetEditFromFileName(string name){
+            foreach(MSBTPyFileEdit edit in this.edits){
+                if (Path.GetFileNameWithoutExtension(edit.file).Equals(name, StringComparison.OrdinalIgnoreCase))
+                    return edit;
+            }
+
+            return null;
+        }
         
+        public void StartIfFileExits(string name){
+            MSBTPyFileEdit edit = GetEditFromFileName(name);
+            if (edit != null)
+                edit.Start();
+            else
+                Console.WriteLine($"Can't find edit {name}.");
+        }
+
         public static int BrokenTagIdFixer(string tag){
             Match match = Regex.Match(tag, @"\d+");
             if (match.Success){
@@ -197,43 +277,18 @@ namespace MSBTRando.Windows{
 
         private static bool IsLatinLetterOrAllowedSymbol(char c){
             UnicodeCategory category = Char.GetUnicodeCategory(c);
-            return (category == UnicodeCategory.UppercaseLetter ||
-                    category == UnicodeCategory.LowercaseLetter ||
-                    category == UnicodeCategory.DecimalDigitNumber ||
-                    category == UnicodeCategory.SpaceSeparator ||
-                    category == UnicodeCategory.OtherPunctuation ||
-                    category == UnicodeCategory.MathSymbol ||
-                    category == UnicodeCategory.CurrencySymbol ||
-                    category == UnicodeCategory.ModifierSymbol ||
-                    category == UnicodeCategory.OtherSymbol ||
-                    Char.IsSymbol(c) || Char.IsPunctuation(c));
+            return (category == UnicodeCategory.UppercaseLetter && c <= 'Z') ||
+                   (category == UnicodeCategory.LowercaseLetter && c <= 'z') ||
+                   (category == UnicodeCategory.DecimalDigitNumber) ||
+                   (c == ' ' || c == '\n' || c == '\r' || Char.IsPunctuation(c) ||
+                    c == '<' || c == '>' || c == '\\');
         }
 
-        public static string LineFixer(string line){
-            string pattern = @"<[^>]+?_\d{1,2}>";
+        public string LineFixer(string line){
+            if(this.removeNonLatinCharacters)
+                line = RemoveNonLatinCharacters(line);
 
-            line = RemoveNonLatinCharacters(line);
-
-            bool hasTagEnd = false;
-
-            string replaced = Regex.Replace(line, pattern, match => {
-                bool o = false;
-                if (match.Value.Contains("/"))
-                    o = true;
-
-                string numberPart = Regex.Match(match.Value, @"\d{1,2}").Value;
-                if (o){
-                    numberPart = (int.Parse(numberPart) - 1).ToString();
-                    hasTagEnd = true;
-                    return $"</Tag_{numberPart}>";
-                }
-                return $"<Tag_{numberPart}>";
-            });
-
-            if (!hasTagEnd)
-                replaced = replaced + "</Tag_0>";
-
-            return replaced;
+            return line;
         }
 
     }
@@ -254,10 +309,13 @@ namespace MSBTRando.Windows{
             this.refName = Path.GetFileName(refName);
         }
 
-        public void Start(string path){
+        public void Start(){
+            string path = this.file;
             string tempFilePath = "Temp_" + Path.GetFileNameWithoutExtension(path);
 
             this.isStarted = true;
+            if(this.window.edits.Contains(this))
+                this.window.editNext.Remove(this);
 
             if (this.window.onlyConvert){
                 this.finishFilePath = tempFilePath.Replace("Temp", "Finish");
@@ -269,7 +327,10 @@ namespace MSBTRando.Windows{
 
             var msbt = new MSBT(File.OpenRead(path), false);
             foreach (Message message in msbt.Messages.Values){
-                 content = content + message.Text + "##!#";
+                for (int i = 0; i < message.Contents.Count; i++){
+                    if (message.Contents[i] is string)
+                        content = content + message.Contents[i] + "##!#";
+                }
             }
 
             msbt = null;
@@ -287,7 +348,6 @@ namespace MSBTRando.Windows{
         }
 
        public void Save(string path, string refMsbtPath){
-            int i = 0;
             if (!File.Exists(refMsbtPath)){
                 Console.WriteLine("Can't find " + refMsbtPath);
                 return;
@@ -296,18 +356,26 @@ namespace MSBTRando.Windows{
             var msbt = new MSBT(File.OpenRead(refMsbtPath), false);
 
             string[] lines = Manager.GetFileIn(path).Split("##!#");
+
+            int m = 0;
+            int l = 0;
             foreach (Message message in msbt.Messages.Values){
                 try{
-                    lines[i] = MSBTWindow.LineFixer(lines[i]);
-                    msbt.Messages.Values.ElementAt(i).Text = lines[i];
+                    for (int i = 0; i < message.Contents.Count; i++){
+                        if (message.Contents[i] is string){
+                            lines[l] = this.window.LineFixer(lines[l]);
+                            msbt.Messages.Values.ElementAt(m).Contents[i] = lines[l];
+                            l++;
+                        }
+                    }
                 }catch(IndexOutOfRangeException ex){
                     break;
                 }catch(Exception ex){
                     Console.WriteLine(ex.Message + ex.StackTrace);
-                    i++;
+                    m++;
                     continue;
                 }
-                i++;
+                m++;
             }
 
             try{
@@ -323,7 +391,7 @@ namespace MSBTRando.Windows{
             this.window.currentlyInProgress--;
             try{
                 if (this.window.editNext.Count != 0){
-                    this.window.editNext[0].Start(this.window.editNext[0].file);
+                    this.window.editNext[0].Start();
                     this.window.editNext.RemoveAt(0);
                 }
             }catch(Exception ex){
