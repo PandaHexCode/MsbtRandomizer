@@ -281,7 +281,8 @@ namespace MSBTRando.Windows{
                    (category == UnicodeCategory.LowercaseLetter && c <= 'z') ||
                    (category == UnicodeCategory.DecimalDigitNumber) ||
                    (c == ' ' || c == '\n' || c == '\r' || Char.IsPunctuation(c) ||
-                    c == '<' || c == '>' || c == '\\');
+                    c == '<' || c == '>' || c == '\\' 
+                    || c == 'ä' || c == 'ö' || c == 'ü' || c == 'ß');
         }
 
         public string LineFixer(string line){
@@ -374,12 +375,15 @@ namespace MSBTRando.Windows{
             foreach (Message message in msbt.Messages.Values){
                 try{
                     lines[m] = this.window.LineFixer(lines[m]);
-                    string[] lineContent = lines[m].Split(new string[] { "<Tag_1>" }, StringSplitOptions.None);
+                    string[] lineContent = lines[m].Split(new string[] { "<Tag_1>" }, StringSplitOptions.None);   
                     int line = 0;
-                    Console.WriteLine(lines[m]);
                     for (int i = 0; i < message.Contents.Count; i++){
                         if (message.Contents[i] is string){
-                            msbt.Messages.Values.ElementAt(m).Contents[i] = lineContent[line];
+                            try{
+                                msbt.Messages.Values.ElementAt(m).Contents[i] = lineContent[line];
+                            }catch(IndexOutOfRangeException ex2){
+                                msbt.Messages.Values.ElementAt(m).Contents[i] = string.Empty;
+                            }
                             line++;
                         }
                     }
