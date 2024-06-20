@@ -380,7 +380,8 @@ namespace MSBTRando.Windows{
                     for (int i = 0; i < message.Contents.Count; i++){
                         if (message.Contents[i] is string){
                             try{
-                                msbt.Messages.Values.ElementAt(m).Contents[i] = lineContent[line];
+                                if (!string.IsNullOrEmpty(lineContent[line]))
+                                    msbt.Messages.Values.ElementAt(m).Contents[i] = lineContent[line];
                             }catch(IndexOutOfRangeException ex2){
                                 msbt.Messages.Values.ElementAt(m).Contents[i] = string.Empty;
                             }
