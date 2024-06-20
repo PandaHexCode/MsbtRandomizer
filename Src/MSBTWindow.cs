@@ -81,12 +81,12 @@ namespace MSBTRando.Windows{
                 ImGui.SameLine();
                 if(ImGui.Button("Start from order"))
                     StartFromOrder();
-                Manager.Tooltip("Auto start files from order + give them to edit a next");
+                Manager.Tooltip("Auto start files from order + give them to edit as next");
 
                 ImGui.SameLine();
                 if(ImGui.Button("Smart start from order"))
                     SmartStartFromOrder();
-                Manager.Tooltip("Auto start files from order + give them to edit a next\n" +
+                Manager.Tooltip("Auto start files from order + give them to edit as next\n" +
                     "Starts the important & big files first\n" +
                     "Need to select a game from settings \nWithout finding the right files it's just starts from order.");
             }
@@ -285,7 +285,14 @@ namespace MSBTRando.Windows{
         }
 
         public string LineFixer(string line){
-            if(this.removeNonLatinCharacters)
+            string pattern = @"<[^>]+>";
+
+            string replaced = Regex.Replace(line, pattern, match => {
+                return $"<tag>";
+            });
+            line = replaced;
+
+            if (this.removeNonLatinCharacters)
                 line = RemoveNonLatinCharacters(line);
 
             return line;
@@ -327,10 +334,16 @@ namespace MSBTRando.Windows{
 
             var msbt = new MSBT(File.OpenRead(path), false);
             foreach (Message message in msbt.Messages.Values){
+                string lineContent = string.Empty;
                 for (int i = 0; i < message.Contents.Count; i++){
-                    if (message.Contents[i] is string)
-                        content = content + message.Contents[i] + "##!#";
+                    if (message.Contents[i] is string){
+                        if (string.IsNullOrEmpty(lineContent))
+                            lineContent = (string)message.Contents[i];
+                        else
+                            lineContent = lineContent + "<Tag_1>" + message.Contents[i];
+                    }
                 }
+                content = content + lineContent + "##!#";
             }
 
             msbt = null;
@@ -358,14 +371,15 @@ namespace MSBTRando.Windows{
             string[] lines = Manager.GetFileIn(path).Split("##!#");
 
             int m = 0;
-            int l = 0;
             foreach (Message message in msbt.Messages.Values){
                 try{
+                    lines[m] = this.window.LineFixer(lines[m]);
+                    string[] lineContent = lines[m].Split(new string[] { "<t>" }, StringSplitOptions.None);
+                    int line = 0;
                     for (int i = 0; i < message.Contents.Count; i++){
                         if (message.Contents[i] is string){
-                            lines[l] = this.window.LineFixer(lines[l]);
-                            msbt.Messages.Values.ElementAt(m).Contents[i] = lines[l];
-                            l++;
+                            msbt.Messages.Values.ElementAt(m).Contents[i] = lineContent[line];
+                            line++;
                         }
                     }
                 }catch(IndexOutOfRangeException ex){
