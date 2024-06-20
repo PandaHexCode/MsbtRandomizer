@@ -288,7 +288,7 @@ namespace MSBTRando.Windows{
             string pattern = @"<[^>]+>";
 
             string replaced = Regex.Replace(line, pattern, match => {
-                return $"<tag>";
+                return $"<Tag_1>";
             });
             line = replaced;
 
@@ -374,16 +374,15 @@ namespace MSBTRando.Windows{
             foreach (Message message in msbt.Messages.Values){
                 try{
                     lines[m] = this.window.LineFixer(lines[m]);
-                    string[] lineContent = lines[m].Split(new string[] { "<t>" }, StringSplitOptions.None);
+                    string[] lineContent = lines[m].Split(new string[] { "<Tag_1>" }, StringSplitOptions.None);
                     int line = 0;
+                    Console.WriteLine(lines[m]);
                     for (int i = 0; i < message.Contents.Count; i++){
                         if (message.Contents[i] is string){
                             msbt.Messages.Values.ElementAt(m).Contents[i] = lineContent[line];
                             line++;
                         }
                     }
-                }catch(IndexOutOfRangeException ex){
-                    break;
                 }catch(Exception ex){
                     Console.WriteLine(ex.Message + ex.StackTrace);
                     m++;
