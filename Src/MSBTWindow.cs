@@ -379,6 +379,7 @@ namespace MSBTRando.Windows{
                     int line = 0;
                     for (int i = 0; i < message.Contents.Count; i++){
                         if (message.Contents[i] is string){
+                            message.Contents[i] = string.Empty;
                             try{
                                 if (!string.IsNullOrEmpty(lineContent[line]))
                                     msbt.Messages.Values.ElementAt(m).Contents[i] = lineContent[line];
