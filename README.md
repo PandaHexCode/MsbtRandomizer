@@ -46,5 +46,18 @@ I use both C# and Python because I couldn't find a C# package that doesn't requi
 
 Have fun!
 
+## Known Issues
+
+- **Translation Errors**: Sometimes words or sentences in other languages are not translated back to your output language correctly.
+- **UI Glitches**: Occasionally, the UI may appear broken, such as the health display for Mario & party.
+- **Message Merging**: Sometimes messages are incorrectly merged into one. For example, "Hello World (New TextBox), Hello again" might appear as "Hello World, Hello again (One TextBox)".
+- **Double Press Required**: Occasionally, you may need to press a button twice to proceed to the next message.
+- **Empty Messages**: There may be instances where messages appear empty.
+- **Crashes**: While unlikely, the game can crash. If you experience a crash, particularly during chapter intro scenes, you will need to regenerate the `ui.msbt` file.
+
+**Please report any new errors you encounter so I can work on fixing them.**
+
+**Note**: Despite these issues, I believe you can still have a fun time with it.
+
 ## Why?
 Just for fun it can lead to very funny results.
