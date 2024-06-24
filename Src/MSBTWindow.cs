@@ -145,7 +145,7 @@ namespace MSBTRando.Windows{
                         continue;
                     MSBTPyFileEdit edit = new MSBTPyFileEdit(this, file);
                     this.edits.Add(edit);
-                    if (this.autoStart && !File.Exists(this.outputFolderPath + Path.GetFileName(file)))
+                    if (this.autoStart)
                         edit.Start();
                 }catch(Exception ex){
                     Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
@@ -292,6 +292,14 @@ namespace MSBTRando.Windows{
                 return $"<Tag_1>";
             });
             line = replaced;
+            
+            if(line.Replace("<Tag_1>", "").Contains("Tag_")){
+                string pattern2 = @"Tag_\d+";
+                string replaced2 = Regex.Replace(line, pattern2, match => {
+                    return "<Tag_1>";
+                });
+                line = replaced2;
+            }
 
             if (this.removeNonLatinCharacters)
                 line = RemoveNonLatinCharacters(line);
