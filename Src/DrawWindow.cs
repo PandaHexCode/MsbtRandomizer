@@ -31,6 +31,7 @@ namespace MSBTRando.Windows{
 
         public static void InitWindows(){
             InitWindow(new MSBTWindow(), "MSBTRando", 10, true, false, 775, 310);
+            //InitWindow(new MSBTWindowTestWindow(), "MSBTTest", 10, true, false, 375, 310);
         }
 
         public static void InitWindow(DrawWindow window, string name, int inputRefsSize, bool autoShow, bool isAdvanced, int minX, int minY){
