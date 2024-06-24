@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +11,7 @@ namespace MSBTRando{
 
     public class SaveFileManager{
         
-        public static string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TheIdkTool";
-        public static string todosFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-         "\\TheIdkTool\\Todos.dat";
+        public static string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MSBTRando";
 
         public static void SaveFiles(){
             if (!Directory.Exists(dirPath))
