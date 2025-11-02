@@ -50,19 +50,6 @@ def translate_to_message(text, dest):
     translated_text = text
     try:
         translated_text = GoogleTranslator(source="auto", target=dest).translate(text)
-
-        for _ in range(4):
-            try:
-                detected_lang = detect(translated_text)
-                if detected_lang.lower() == dest.lower():
-                    break
-                else:
-                    print(f"Detected {detected_lang}, expected {dest}. Retrying...")
-                    time.sleep(2)
-                    translated_text = GoogleTranslator(source="auto", target=dest).translate(translated_text)
-            except Exception as inner_ex:
-                print(f"Langdetect error: {inner_ex}")
-                break
     except Exception as ex:
         print(str(ex))
 
