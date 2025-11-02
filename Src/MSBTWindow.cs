@@ -41,8 +41,8 @@ namespace MSBTRando.Windows{
 
             if (this.translatationsCount < 0)
                 this.translatationsCount = 0;
-            if (this.translatationsCount > 10)
-                this.translatationsCount = 10;
+            if (this.translatationsCount > 100)
+                this.translatationsCount = 100;
 
 
             ImGui.SameLine();
@@ -286,21 +286,6 @@ namespace MSBTRando.Windows{
         }
 
         public string LineFixer(string line){
-            string pattern = @"<[^>]+>";
-
-            string replaced = Regex.Replace(line, pattern, match => {
-                return $"<Tag_1>";
-            });
-            line = replaced;
-            
-            if(line.Replace("<Tag_1>", "").Contains("Tag_")){
-                string pattern2 = @"Tag_\d+";
-                string replaced2 = Regex.Replace(line, pattern2, match => {
-                    return "<Tag_1>";
-                });
-                line = replaced2;
-            }
-
             if (this.removeNonLatinCharacters)
                 line = RemoveNonLatinCharacters(line);
 
